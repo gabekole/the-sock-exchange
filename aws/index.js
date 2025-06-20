@@ -2,6 +2,7 @@ const sharp = require('sharp');
 
 exports.handler = async (event) => {
     try {
+
         const inputBuffer = Buffer.from(event.body, 'base64');
 
         const outputBuffer = await sharp(inputBuffer)
