@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Home from "./components/Home";
 import Footer from "./components/Footer"
 import Search from "./components/Search"
-import Promo from "./components/Promo";
+import AddSock from './components/AddSock';
 import About from "./components/About";
 import Featured from "./components/Featured"
 
@@ -75,6 +75,11 @@ function App() {
                   About
                 </Link>
               </li>
+              <li className="nav-item">
+                <Link className="nav-link" to="/add-sock">
+                  Add Sock
+                </Link>
+              </li>
               <li className="nav-item dropdown">
                 <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   Dropdown
@@ -106,6 +111,7 @@ function App() {
               <Routes>
                   <Route exact path="/" element={<Home data={sock_data} handleDelete={handleDelete} />} />
                   <Route path="/about" element={<About />} />
+                  <Route path="/add-sock" element={<AddSock />} />
               </Routes>
             </div>
               <Footer environment="DEVELOPMENT"/>
