@@ -1,12 +1,33 @@
+import React, { useState, useEffect } from "react";
+
 import Sock from "./components/Sock";
 import Footer from "./components/Footer"
 import Search from "./components/Search"
 import Promo from "./components/Promo";
 
-import sock_data from './assets/sock.json';
+// import sock_data from './assets/sock.json';
 import promo_data from './assets/promo.json'
 
 function App() {
+
+  const [sock_data, setData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+        try {
+            const response = await fetch(import.meta.env.VITE_SOCKS_API_URL);
+            if (!response.ok) {
+                throw new Error('Data could not be fetched!');
+            }
+            const json_response = await response.json();
+            setData(json_response); // assign JSON response to the data variable.
+        } catch (error) {
+            console.error('Error fetching socks:', error);
+        }
+    };
+
+    fetchData();
+  }, []);
 
   return (
     <>
@@ -39,7 +60,7 @@ function App() {
                 <a className="nav-link disabled" aria-disabled="true">Disabled</a>
               </li>
             </ul>
-            <Search />
+            <Search setData={setData} />
           </div>
         </div>
       </nav>
@@ -58,7 +79,7 @@ function App() {
             <div className="card-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
               {
                 sock_data.map((sock) => (
-                  <Sock key={sock.id} data={sock} />
+                  <Sock key={sock._id} data={sock} />
                 ))
               }
             </div>
