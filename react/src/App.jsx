@@ -18,6 +18,10 @@ import {
 import promo_data from './assets/promo.json'
 
 function App() {
+
+  
+  const [sock_data, setData] = useState([]);
+
   const handleDelete = async (sockId) => {
     try {
         // Make an API request to delete the sock with the given sockId
@@ -28,7 +32,7 @@ function App() {
             throw new Error('Sock could not be deleted!');
         }
         // Update the state or fetch the updated data from the server
-        const updatedData = data.filter(sock => sock._id !== sockId); // Remove the deleted sock from the data array
+        const updatedData = sock_data.filter(sock => sock._id !== sockId); // Remove the deleted sock from the data array
         setData(updatedData); // Update the state with the updated data
     } catch (error) {
         console.error('Error deleting sock:', error);
@@ -36,7 +40,6 @@ function App() {
   };
 
 
-  const [sock_data, setData] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {

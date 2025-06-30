@@ -1,5 +1,4 @@
 import express from 'express';
-import { promises as fs } from 'fs';
 import { MongoClient, ObjectId } from 'mongodb';
 import dotenv from 'dotenv';
 import cors from 'cors';
@@ -9,26 +8,84 @@ const url = process.env.MONGO_DB_URL;
 const dbName = process.env.MONGO_DB;
 const collectionName = process.env.MONGO_DB_COLLECTION;
 
-
 const app = express();
 const PORT = 3000;
 
 app.use(cors()); // Enable CORS for all routes
+app.use(express.json()); // Enable JSON parsing for request bodies
 
-// Endpoint to read and send JSON file content
+// Endpoint to read and send all socks
 app.get('/socks', async (_req, res) => {
-    try {
-        const client = await MongoClient.connect(url);
-        const db = client.db(dbName);
-        const collection = db.collection(collectionName);
-        const socks = await collection.find({}).toArray();
-        res.json(socks);
-    } catch (err) {
-        console.error("Error:", err);
-        res.status(500).send("Hmmm, something smells... No socks for you! ☹");
-    }
+  try {
+    const client = await MongoClient.connect(url);
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const socks = await collection.find({}).toArray();
+    res.status(200).json(socks);
+    client.close();
+  } catch (err) {
+    console.error("Error:", err);
+    res.status(500).send("Hmmm, something smells... No socks for you! ☹");
+  }
 });
 
+// POST Search Route Handler
+app.post('/socks/search', async (req, res) => {
+  try {
+    const { color } = req.body;
+    const client = await MongoClient.connect(url);
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const socks = await collection.find({ color: color }).toArray();
+    if (socks.length > 0) {
+      res.status(200).json(socks);
+    } else {
+      res.status(403).send('No socks found with the specified color');
+    }
+    client.close();
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).send('Hmm, something doesn\'t smell right... Error searching for socks');
+  }
+});
+
+// DELETE Delete Route Handler
+app.delete('/socks/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const client = await MongoClient.connect(url);
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    const result = await collection.deleteOne({ _id: new ObjectId(id) });
+    if (result.deletedCount > 0) {
+      res.status(200).json({});
+    } else {
+      res.status(403).send('Sock not found');
+    }
+    client.close();
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).send('Hmm, something doesn\'t smell right... Error deleting sock');
+  }
+});
+
+// POST Add Route Handler
+app.post('/socks', async (req, res) => {
+  try {
+    const newSock = req.body;
+    const client = await MongoClient.connect(url);
+    const db = client.db(dbName);
+    const collection = db.collection(collectionName);
+    await collection.insertOne(newSock);
+    res.status(200).json({});
+    client.close();
+  } catch (err) {
+    console.error('Error:', err);
+    res.status(500).send('Hmm, something doesn\'t smell right... Error adding sock');
+  }
+});
+
+// Start the server
 app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
