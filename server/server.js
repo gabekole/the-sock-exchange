@@ -32,16 +32,19 @@ app.get('/socks', async (_req, res) => {
 // POST Search Route Handler
 app.post('/socks/search', async (req, res) => {
   try {
-    const { color } = req.body;
+    const { searchTerm } = req.body;
+    console.log(req.body)
+    
     const client = await MongoClient.connect(url);
     const db = client.db(dbName);
     const collection = db.collection(collectionName);
-    const socks = await collection.find({ color: color }).toArray();
-    if (socks.length > 0) {
-      res.status(200).json(socks);
-    } else {
-      res.status(403).send('No socks found with the specified color');
-    }
+
+    const sampleSock = await collection.findOne();
+
+    const socks = await collection.find({ "sockDetails.color" : searchTerm }).toArray();
+    console.log(socks)
+    res.status(200).json(socks);
+
     client.close();
   } catch (err) {
     console.error('Error:', err);
