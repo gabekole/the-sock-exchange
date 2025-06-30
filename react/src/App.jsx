@@ -6,6 +6,9 @@ import Search from "./components/Search"
 import AddSock from './components/AddSock';
 import About from "./components/About";
 import Featured from "./components/Featured"
+import { AuthProvider } from "./hooks/AuthContext";
+import RequireAuth from "./components/RequireAuth";
+import LoginForm from "./components/LoginForm";
 
 import {
   BrowserRouter as Router,
@@ -111,11 +114,19 @@ function App() {
               <Featured promo_data={promo_data}/>
             </div>
             <div className="card-container" style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+            <AuthProvider>
               <Routes>
                   <Route exact path="/" element={<Home data={sock_data} handleDelete={handleDelete} />} />
                   <Route path="/about" element={<About />} />
-                  <Route path="/add-sock" element={<AddSock />} />
+                  <Route path="/add-sock" element={
+                  <RequireAuth>
+                      <AddSock />
+                  </RequireAuth>
+                  } />
+                  <Route path="/Login" element={<LoginForm />} />
               </Routes>
+            </AuthProvider>
+
             </div>
               <Footer environment="DEVELOPMENT"/>
           </div>
