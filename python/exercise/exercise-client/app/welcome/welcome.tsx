@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaTemperatureHigh, FaTemperatureLow, FaWind, FaTint, FaSun, FaMoon } from 'react-icons/fa';
 
 // Define the type for weather data
 interface WeatherData {
@@ -13,10 +14,10 @@ interface WeatherData {
   wind_speed: number;
   humidity: number;
   pressure: number;
-  visibility: number;
   sunrise: number;
   sunset: number;
   units: string;
+  dew_point: number;
 }
 
 export function Welcome() {
@@ -36,9 +37,14 @@ export function Welcome() {
     }
   };
 
-  // Function to determine weather icon URL based on time of day and weather code
+  // Function to determine weather icon URL based on weather code
   const getWeatherIconUrl = (weatherCode: string) => {
     return `https://openweathermap.org/img/wn/${weatherCode}@2x.png`;
+  };
+
+  // Function to format time
+  const formatTime = (timestamp: number) => {
+    return new Date(timestamp * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
   return (
@@ -62,40 +68,43 @@ export function Welcome() {
           {weatherData && (
             <div className="mt-6 p-6 bg-gray-700 rounded w-full">
               {/* Partial Widget */}
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center mb-6">
                 <img
                   src={getWeatherIconUrl(weatherData.weather_icon)}
                   alt={weatherData.weather_description}
-                  className="w-24 h-24"
+                  className="w-32 h-32 mb-4"
                 />
-                <p className="text-4xl font-bold">{weatherData.temperature}°{weatherData.units === 'metric' ? 'C' : 'F'}</p>
-                <p className="text-xl">{weatherData.city}, {weatherData.country}</p>
+                <p className="text-4xl font-bold mb-2">{Math.round(weatherData.temperature)}°{weatherData.units === 'metric' ? 'C' : 'F'}</p>
+                <p className="text-xl mb-2">{weatherData.city}, {weatherData.country}</p>
+                <p className="text-lg">{weatherData.weather_description}</p>
               </div>
+              <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700"></hr>
               {/* Additional Details */}
-              <div className="mt-6">
-                <div className="flex items-center gap-2">
-                  <p className="text-lg">Feels Like: {weatherData.feels_like}°{weatherData.units === 'metric' ? 'C' : 'F'}</p>
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <FaTemperatureHigh size={24} />
+                  <p className="text-lg">High: {Math.round(weatherData.temp_max)}°{weatherData.units === 'metric' ? 'C' : 'F'}</p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <p className="text-lg">High: {weatherData.temp_max}°{weatherData.units === 'metric' ? 'C' : 'F'}</p>
+                <div className="flex items-center gap-2 mb-4">
+                  <FaTemperatureLow size={24} />
+                  <p className="text-lg">Low: {Math.round(weatherData.temp_min)}°{weatherData.units === 'metric' ? 'C' : 'F'}</p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <p className="text-lg">Low: {weatherData.temp_min}°{weatherData.units === 'metric' ? 'C' : 'F'}</p>
+                <div className="flex items-center gap-2 mb-4">
+                  <FaWind size={24} />
+                  <p className="text-lg">Wind Speed: {Math.round(weatherData.wind_speed)} {weatherData.units === 'metric' ? 'm/s' : 'mph'}</p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <p className="text-lg">Wind Speed: {weatherData.wind_speed} {weatherData.units === 'metric' ? 'm/s' : 'mph'}</p>
-                </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 mb-4">
+                  <FaTint size={24} />
                   <p className="text-lg">Humidity: {weatherData.humidity}%</p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <p className="text-lg">Pressure: {weatherData.pressure} hPa</p>
+                <div className="flex items-center gap-2 mb-4">
+                  <FaSun size={24} />
+                  <p className="text-lg">Sunrise: {formatTime(weatherData.sunrise)}</p>
                 </div>
-                <div className="flex items-center gap-2">
-                  <p className="text-lg">Visibility: {weatherData.visibility} meters</p>
+                <div className="flex items-center gap-2 mb-4">
+                  <FaMoon size={24} />
+                  <p className="text-lg">Sunset: {formatTime(weatherData.sunset)}</p>
                 </div>
-                <p className="text-lg">Sunrise: {new Date(weatherData.sunrise * 1000).toLocaleTimeString()}</p>
-                <p className="text-lg">Sunset: {new Date(weatherData.sunset * 1000).toLocaleTimeString()}</p>
               </div>
             </div>
           )}
