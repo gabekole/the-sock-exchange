@@ -31,7 +31,6 @@ def get_weather():
     }
 
     try:
-        print(WEATHER_API_URL, params)
         response = requests.get(WEATHER_API_URL, params=params)
         response.raise_for_status()
         data = response.json()
@@ -42,6 +41,7 @@ def get_weather():
             'temperature': data['main']['temp'],
             'feels_like': data['main']['feels_like'],
             'weather_description': data['weather'][0]['description'],
+            'weather_icon': data['weather'][0]['icon'],  # Include the icon code
             'wind_speed': data['wind']['speed'],
             'units': units
         }
