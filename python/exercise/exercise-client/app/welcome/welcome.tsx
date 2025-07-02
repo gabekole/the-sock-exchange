@@ -30,37 +30,37 @@ export function Welcome() {
   };
 
   return (
-    <main className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4 text-center">Weather Query</h1>
-        <div className="flex flex-col items-center gap-4">
+    <main className="flex items-center justify-center min-h-screen bg-gray-900 text-white">
+      <div className="bg-gray-800 p-10 rounded shadow-md w-full max-w-md">
+        <h1 className="text-3xl font-bold mb-6 text-center">Weather Query</h1>
+        <div className="flex flex-col items-center gap-6">
           <input
             type="text"
             value={city}
             onChange={(e) => setCity(e.target.value)}
             placeholder="Enter city name"
-            className="border rounded p-2 w-full"
+            className="border rounded p-3 w-full bg-gray-700 text-white"
           />
           <button
             onClick={fetchWeatherData}
-            className="bg-blue-500 text-white rounded p-2 w-full hover:bg-blue-600"
+            className="bg-blue-600 text-white rounded p-3 w-full hover:bg-blue-700"
           >
             Get Weather
           </button>
           {weatherData && (
-            <div className="mt-4 p-4 bg-gray-50 rounded w-full">
-              <h3 className="text-lg font-semibold">Weather Data for {weatherData.city}, {weatherData.country}:</h3>
-              <div className="flex items-center gap-2">
+            <div className="mt-6 p-6 bg-gray-700 rounded w-full">
+              <h3 className="text-xl font-semibold">Weather Data for {weatherData.city}, {weatherData.country}:</h3>
+              <div className="flex items-center gap-3 mt-2">
                 <img
                   src={`http://openweathermap.org/img/wn/${weatherData.weather_icon}@2x.png`}
                   alt={weatherData.weather_description}
-                  className="w-12 h-12"
+                  className="w-14 h-14"
                 />
-                <p className="text-sm">{weatherData.weather_description}</p>
+                <p className="text-lg">{weatherData.weather_description}</p>
               </div>
-              <p className="text-sm">Temperature: {weatherData.temperature}°{weatherData.units === 'metric' ? 'C' : 'F'}</p>
-              <p className="text-sm">Feels Like: {weatherData.feels_like}°{weatherData.units === 'metric' ? 'C' : 'F'}</p>
-              <p className="text-sm">Wind Speed: {weatherData.wind_speed} {weatherData.units === 'metric' ? 'm/s' : 'mph'}</p>
+              <p className="text-lg mt-2">Temperature: {weatherData.temperature}°{weatherData.units === 'metric' ? 'C' : 'F'}</p>
+              <p className="text-lg">Feels Like: {weatherData.feels_like}°{weatherData.units === 'metric' ? 'C' : 'F'}</p>
+              <p className="text-lg">Wind Speed: {weatherData.wind_speed} {weatherData.units === 'metric' ? 'm/s' : 'mph'}</p>
             </div>
           )}
         </div>
