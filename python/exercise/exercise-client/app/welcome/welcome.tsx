@@ -6,9 +6,16 @@ interface WeatherData {
   country: string;
   temperature: number;
   feels_like: number;
+  temp_min: number;
+  temp_max: number;
   weather_description: string;
   weather_icon: string;
   wind_speed: number;
+  humidity: number;
+  pressure: number;
+  visibility: number;
+  sunrise: number;
+  sunset: number;
   units: string;
 }
 
@@ -27,6 +34,11 @@ export function Welcome() {
     } catch (error) {
       console.error('Error:', error);
     }
+  };
+
+  // Function to determine weather icon URL based on time of day and weather code
+  const getWeatherIconUrl = (weatherCode: string) => {
+    return `https://openweathermap.org/img/wn/${weatherCode}@2x.png`;
   };
 
   return (
@@ -49,18 +61,42 @@ export function Welcome() {
           </button>
           {weatherData && (
             <div className="mt-6 p-6 bg-gray-700 rounded w-full">
-              <h3 className="text-xl font-semibold">Weather Data for {weatherData.city}, {weatherData.country}:</h3>
-              <div className="flex items-center gap-3 mt-2">
+              {/* Partial Widget */}
+              <div className="flex flex-col items-center">
                 <img
-                  src={`http://openweathermap.org/img/wn/${weatherData.weather_icon}@2x.png`}
+                  src={getWeatherIconUrl(weatherData.weather_icon)}
                   alt={weatherData.weather_description}
-                  className="w-14 h-14"
+                  className="w-24 h-24"
                 />
-                <p className="text-lg">{weatherData.weather_description}</p>
+                <p className="text-4xl font-bold">{weatherData.temperature}°{weatherData.units === 'metric' ? 'C' : 'F'}</p>
+                <p className="text-xl">{weatherData.city}, {weatherData.country}</p>
               </div>
-              <p className="text-lg mt-2">Temperature: {weatherData.temperature}°{weatherData.units === 'metric' ? 'C' : 'F'}</p>
-              <p className="text-lg">Feels Like: {weatherData.feels_like}°{weatherData.units === 'metric' ? 'C' : 'F'}</p>
-              <p className="text-lg">Wind Speed: {weatherData.wind_speed} {weatherData.units === 'metric' ? 'm/s' : 'mph'}</p>
+              {/* Additional Details */}
+              <div className="mt-6">
+                <div className="flex items-center gap-2">
+                  <p className="text-lg">Feels Like: {weatherData.feels_like}°{weatherData.units === 'metric' ? 'C' : 'F'}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <p className="text-lg">High: {weatherData.temp_max}°{weatherData.units === 'metric' ? 'C' : 'F'}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <p className="text-lg">Low: {weatherData.temp_min}°{weatherData.units === 'metric' ? 'C' : 'F'}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <p className="text-lg">Wind Speed: {weatherData.wind_speed} {weatherData.units === 'metric' ? 'm/s' : 'mph'}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <p className="text-lg">Humidity: {weatherData.humidity}%</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <p className="text-lg">Pressure: {weatherData.pressure} hPa</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <p className="text-lg">Visibility: {weatherData.visibility} meters</p>
+                </div>
+                <p className="text-lg">Sunrise: {new Date(weatherData.sunrise * 1000).toLocaleTimeString()}</p>
+                <p className="text-lg">Sunset: {new Date(weatherData.sunset * 1000).toLocaleTimeString()}</p>
+              </div>
             </div>
           )}
         </div>

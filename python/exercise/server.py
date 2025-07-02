@@ -16,7 +16,7 @@ WEATHER_API_URL = os.getenv('WEATHER_API_URL')
 @app.route('/api/weather', methods=['GET'])
 def get_weather():
     query = request.args.get('q')
-    units = request.args.get('units', 'standard')
+    units = 'imperial'
 
     if not query:
         return jsonify({'error': 'Query parameter is required'}), 400
@@ -35,14 +35,23 @@ def get_weather():
         response.raise_for_status()
         data = response.json()
 
+        print(data)
+
         weather_info = {
-            'city': data['name'],
-            'country': data['sys']['country'],
+            'city': data.get('name', ''),
+            'country': data['sys'].get('country', ''),
             'temperature': data['main']['temp'],
             'feels_like': data['main']['feels_like'],
+            'temp_min': data['main']['temp_min'],
+            'temp_max': data['main']['temp_max'],
             'weather_description': data['weather'][0]['description'],
-            'weather_icon': data['weather'][0]['icon'],  # Include the icon code
+            'weather_icon': data['weather'][0]['icon'],
             'wind_speed': data['wind']['speed'],
+            'humidity': data['main']['humidity'],
+            'pressure': data['main']['pressure'],
+            'visibility': data.get('visibility', 0),
+            'sunrise': data['sys']['sunrise'],
+            'sunset': data['sys']['sunset'],
             'units': units
         }
 
@@ -50,8 +59,6 @@ def get_weather():
 
     except requests.exceptions.RequestException as e:
         return jsonify({'error': str(e)}), 500
-
-
 
 @app.route('/assets/<path:path>')
 def serve_assets(path):

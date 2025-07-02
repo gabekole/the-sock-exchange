@@ -4,6 +4,6 @@ export default {
   // Config options...
   ssr: false,
   async prerender() {
-    return ["/"];
+    return ["/", '/about'];
   },
 } satisfies Config;
