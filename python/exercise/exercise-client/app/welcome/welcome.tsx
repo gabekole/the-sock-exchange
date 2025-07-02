@@ -1,9 +1,25 @@
+import React, { useState } from 'react';
 import logoDark from "./logo-dark.svg";
 import logoLight from "./logo-light.svg";
-
-import { NavLink, Link } from "react-router";
+import { NavLink } from "react-router";
 
 export function Welcome() {
+  const [city, setCity] = useState('');
+  const [weatherData, setWeatherData] = useState(null);
+
+  const fetchWeatherData = async () => {
+    try {
+      const response = await fetch(`/api/weather?q=${city}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch weather data');
+      }
+      const data = await response.json();
+      setWeatherData(data);
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
   return (
     <main className="flex items-center justify-center pt-16 pb-4">
       <div className="flex-1 flex flex-col items-center gap-16 min-h-0">
@@ -22,7 +38,7 @@ export function Welcome() {
           </div>
         </header>
         <NavLink to="/about" end>
-        About
+          About
         </NavLink>
         <div className="max-w-[300px] w-full space-y-6 px-4">
           <nav className="rounded-3xl border border-gray-200 p-6 dark:border-gray-700 space-y-4">
@@ -45,6 +61,27 @@ export function Welcome() {
               ))}
             </ul>
           </nav>
+        </div>
+        <div className="flex flex-col items-center gap-4">
+          <input
+            type="text"
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            placeholder="Enter city name"
+            className="border rounded p-2"
+          />
+          <button
+            onClick={fetchWeatherData}
+            className="bg-blue-500 text-white rounded p-2"
+          >
+            Get Weather
+          </button>
+          {weatherData && (
+            <div className="mt-4">
+              <h3>Weather Data for {city}:</h3>
+              <pre>{JSON.stringify(weatherData, null, 2)}</pre>
+            </div>
+          )}
         </div>
       </div>
     </main>

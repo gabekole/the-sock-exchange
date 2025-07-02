@@ -1,10 +1,56 @@
-from flask import Flask, send_from_directory, request
+import requests
+import os 
+from flask import Flask, send_from_directory, request, jsonify
+from dotenv import load_dotenv
+
 
 app = Flask(__name__)
 
-@app.route('/api/data', methods=['GET'])
-def get_data():
-    return "Good"
+load_dotenv()
+
+API_KEY = os.getenv('WEATHER_API_KEY')
+WEATHER_API_URL = os.getenv('WEATHER_API_URL')
+
+
+
+@app.route('/api/weather', methods=['GET'])
+def get_weather():
+    query = request.args.get('q')
+    units = request.args.get('units', 'standard')
+
+    if not query:
+        return jsonify({'error': 'Query parameter is required'}), 400
+
+    if units not in ['standard', 'metric', 'imperial']:
+        return jsonify({'error': 'Invalid units parameter'}), 400
+
+    params = {
+        'q': query,
+        'appid': API_KEY,
+        'units': units
+    }
+
+    try:
+        print(WEATHER_API_URL, params)
+        response = requests.get(WEATHER_API_URL, params=params)
+        response.raise_for_status()
+        data = response.json()
+
+        weather_info = {
+            'city': data['name'],
+            'country': data['sys']['country'],
+            'temperature': data['main']['temp'],
+            'feels_like': data['main']['feels_like'],
+            'weather_description': data['weather'][0]['description'],
+            'wind_speed': data['wind']['speed'],
+            'units': units
+        }
+
+        return jsonify(weather_info)
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({'error': str(e)}), 500
+
 
 
 @app.route('/assets/<path:path>')
