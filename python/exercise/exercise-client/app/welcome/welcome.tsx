@@ -31,6 +31,9 @@ export function Welcome() {
         throw new Error('Failed to fetch weather data');
       }
       const data: WeatherData = await response.json();
+
+      console.log(data)
+
       setWeatherData(data);
     } catch (error) {
       console.error('Error:', error);
@@ -47,15 +50,23 @@ export function Welcome() {
     return new Date(timestamp * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  // Handle key press event
+  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      fetchWeatherData();
+    }
+  };
+
   return (
     <main className="flex items-start justify-center min-h-screen bg-gray-900 text-white">
-      <div className="bg-gray-800 p-10 rounded shadow-md w-full max-w-xl mt-10">
+      <div className="bg-gray-800 p-10 rounded shadow-md w-full mt-10">
         <h1 className="text-3xl font-bold mb-6 text-center">Weather Query</h1>
         <div className="flex flex-col items-center gap-6">
           <input
             type="text"
             value={city}
             onChange={(e) => setCity(e.target.value)}
+            onKeyDown={handleKeyPress}
             placeholder="Enter city name"
             className="border rounded p-3 w-full bg-gray-700 text-white"
           />

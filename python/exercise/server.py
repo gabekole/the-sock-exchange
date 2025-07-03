@@ -3,9 +3,7 @@ import os
 from flask import Flask, send_from_directory, request, jsonify
 from dotenv import load_dotenv
 
-
 app = Flask(__name__)
-
 load_dotenv()
 
 API_KEY = os.getenv('WEATHER_API_KEY')
@@ -31,6 +29,7 @@ def get_weather():
     }
 
     try:
+        print(params)
         response = requests.get(WEATHER_API_URL, params=params)
         response.raise_for_status()
         data = response.json()
@@ -57,8 +56,15 @@ def get_weather():
 
         return jsonify(weather_info)
 
-    except requests.exceptions.RequestException as e:
-        return jsonify({'error': str(e)}), 500
+    except requests.exceptions.HTTPError as http_err:
+        # Capture the status code from the response
+        status_code = http_err.response.status_code
+        print("HTTP ERROR", str(http_err))
+        return jsonify({'error': str(http_err)}), status_code
+
+    except requests.exceptions.RequestException as req_err:
+        print("REQUEST ERROR", str(req_err))
+        return jsonify({'error': str(req_err)}), 500
 
 @app.route('/assets/<path:path>')
 def serve_assets(path):
